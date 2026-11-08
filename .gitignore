@@ -19,3 +19,8 @@ __pycache__/
 
 # kaggle push build dirs
 build/
+
+# secrets (Kaggle tokens) - never commit
+.env
+.env.*
+!.env.example
