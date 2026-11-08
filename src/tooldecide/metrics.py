@@ -6,8 +6,8 @@ import numpy as np
 
 
 def accuracy(pred, gold) -> np.ndarray:
-    """Per-instance correctness for single-tool instances. pred: name or None; gold: name."""
-    return np.array([p is not None and p == g for p, g in zip(pred, gold)], dtype=bool)
+    """Per-instance correctness for single-tool instances. pred: name, or None/NaN for no answer; gold: name."""
+    return np.array([isinstance(p, str) and p == g for p, g in zip(pred, gold)], dtype=bool)
 
 
 def macro_accuracy(correct, gold) -> float:
@@ -29,7 +29,7 @@ def set_scores(pred_sets, gold_sets) -> tuple[np.ndarray, np.ndarray]:
 
 def hard_confusion(pred, gold, hard_lists) -> float:
     """Among wrong (but parsed) answers, the fraction that picked one of the TF-IDF-similar distractors."""
-    wrong = [(p, h) for p, g, h in zip(pred, gold, hard_lists) if p is not None and p != g]
+    wrong = [(p, h) for p, g, h in zip(pred, gold, hard_lists) if isinstance(p, str) and p != g]
     return float(np.mean([p in h for p, h in wrong])) if wrong else float("nan")
 
 
