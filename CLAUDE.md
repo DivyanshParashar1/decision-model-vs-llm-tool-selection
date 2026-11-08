@@ -44,10 +44,8 @@ Done:
   (16,082 after capping at 150 per tool); `plugin_des.json` = {tool: description}; `multi_tool_query_golden.json` =
   497 items `{query, tool: [a, b]}`; `tmp_dataset/Task2-Subtask1.json` = 995 official prompts.
 
-In flight:
-- `divyanshparashar12/tools-acc2-smoke`: a tiny notebook checking GPU + internet on account 2 (phone now verified).
-  Check it with `python tools/kwait.py tools-acc2-smoke --account acc2 --fetch` and look for `Tesla T4` and
-  `INTERNET_OK` in `build/tools-acc2-smoke/out/*.log`.
+- Account 2 verified (2026-11-08 22:08 IST): smoke notebook `divyanshparashar12/tools-acc2-smoke` saw 2× Tesla T4 and
+  internet. (Its first run, before phone verification took effect, had neither.)
 
 Not started: everything in section 4.
 
