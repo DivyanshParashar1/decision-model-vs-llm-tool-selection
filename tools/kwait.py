@@ -15,13 +15,17 @@ import subprocess
 import sys
 import time
 
+import kenv
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 AUTH_HINTS = ("Authentication required", "kernels.get' was denied", "401", "Unauthorized", "invalid_grant")
 
 
+ACCOUNT = "main"
+
+
 def run(args):
-    p = subprocess.run(["kaggle", *args], capture_output=True, text=True)
-    return p.returncode, (p.stdout + p.stderr).strip()
+    return kenv.run(args, ACCOUNT)
 
 
 def user():
@@ -59,9 +63,12 @@ def main():
     ap.add_argument("--every", type=int, default=90, help="seconds between checks")
     ap.add_argument("--auth-grace-min", type=int, default=30, help="keep retrying login this long before giving up")
     ap.add_argument("--fetch", action="store_true")
+    ap.add_argument("--account", default="main", choices=kenv.ACCOUNTS)
     a = ap.parse_args()
+    global ACCOUNT
+    ACCOUNT = a.account
 
-    u = user() or "divyanshparashar1"
+    u = user() or kenv.user(a.account)
     refs = {s: s if "/" in s else f"{u}/{s}" for s in a.slugs}
     auth_fail_since = None
     while True:
