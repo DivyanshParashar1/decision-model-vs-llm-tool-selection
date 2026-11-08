@@ -1,0 +1,78 @@
+{
+  "data_version": "d1",
+  "seed": 0,
+  "k": 10,
+  "n_hard": 4,
+  "cap": 150,
+  "n_unseen": 30,
+  "cleaning": {
+    "raw": 20614,
+    "ambiguous_queries_dropped": 12,
+    "after_dedupe": 20523
+  },
+  "after_cap": 16034,
+  "unseen_tools": [
+    "AI2sql",
+    "Agones",
+    "Algorithma",
+    "AppyPieAIAppBuilder",
+    "AusSurfReport",
+    "BookTool",
+    "C3_Glide",
+    "CharityTool",
+    "MediaModifyTool",
+    "MediaTool",
+    "MixerBox_WebSearchG_web_search",
+    "MyWritingCompanion",
+    "NewsTool",
+    "Now",
+    "RepoTool",
+    "ShoppingAssistant",
+    "VideoSummarizeTool",
+    "abc_to_audio",
+    "decision_journal",
+    "deployscript",
+    "dev",
+    "hadith",
+    "lsongai",
+    "metaphor_search_api",
+    "mini_habits",
+    "seoanalysis",
+    "tira",
+    "total_query_meta_search_engine",
+    "uk_politics",
+    "video_highlight"
+  ],
+  "split_sizes": {
+    "test_multi": 497,
+    "test_official": 995,
+    "test_seen": 1365,
+    "test_unseen": 2407,
+    "train": 10897,
+    "val": 1365
+  },
+  "split_hashes": {
+    "test_multi": "f0eef7dab6391fef",
+    "test_official": "05ed7dc867d0d576",
+    "test_seen": "47be35f9be74993f",
+    "test_unseen": "264587cf11cc7587",
+    "train": "cab7ad0e42b79fc3",
+    "val": "d3e859d96bf4d47f"
+  },
+  "tools_hash": "5cdb3ce88adb06dd",
+  "leak_rate": {
+    "test_multi": 0.0402,
+    "test_official": 0.0673,
+    "test_seen": 0.052,
+    "test_unseen": 0.0511,
+    "train": 0.054,
+    "val": 0.0462
+  },
+  "official_query_in_train": 0.6442211055276382,
+  "built_on": {
+    "main": "divyanshparashar1/tools-01-data",
+    "acc2": "divyanshparashar12/tools-01-data"
+  },
+  "hashes_identical_across_accounts": true,
+  "source": "github.com/HowieHwong/MetaTool (master, raw files fetched 2026-11-08)"
+}
