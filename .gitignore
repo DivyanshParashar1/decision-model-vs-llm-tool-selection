@@ -1,0 +1,21 @@
+# data & artifacts (live on Kaggle / HF, not in git)
+chess_data/
+raw_tmp/
+data/
+runs/
+*.parquet
+*.zst
+*.tar
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# os
+.DS_Store
+
+# kaggle push build dirs
+build/
