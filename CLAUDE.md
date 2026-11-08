@@ -32,7 +32,7 @@ both: the options are given and the decision is shallow. See `../exp1 .../report
   the reports accurate.
 - Use they/them for the user.
 
-## 3. Current status (as of 2026-11-08, 21:30 IST)
+## 3. Current status (as of 2026-11-08, 23:30 IST)
 
 Done:
 - [SPEC.md](SPEC.md): full design (MetaTool data, k = 10 candidates = 4 TF-IDF look-alikes + 5 random, 30 unseen tools,
@@ -47,7 +47,19 @@ Done:
 - Account 2 verified (2026-11-08 22:08 IST): smoke notebook `divyanshparashar12/tools-acc2-smoke` saw 2× Tesla T4 and
   internet. (Its first run, before phone verification took effect, had neither.)
 
-Not started: everything in section 4.
+- Library `src/tooldecide/` written: `instances`, `prompts`, `metrics`, `evaluate` (shared per-split scorer),
+  `decider`, `gen_llm`, `run_decider`, `train_decider`, `train_llm`. 15 unit tests pass.
+- **Step 1 done** (2026-11-08): `tools-01-data` ran on both accounts; split hashes identical (and identical to a local
+  build), frozen in `docs/data_manifest.json`. Sizes: train 10,897 / val 1,365 / test_seen 1,365 / test_unseen 2,407 /
+  test_multi 497 / test_official 995. 64% of official queries also appear in train, so report official accuracy on the
+  `query_in_train == False` subset too (the scorer does this).
+- Notebooks 02, 03, 04 written; first QUICK smoke runs pushed (02 + 04 on main, 03 on acc2).
+
+Decider scoring detail: a classification schema with `multi_label=True, cls_threshold=0, class_act="softmax"`
+returns a softmax probability for every candidate (verified in gliner2 2.1.0 source), and `batch_extract` takes one
+schema per text, so instances with different tool lists batch together.
+
+Not started: full runs of steps 2–4, step 5.
 
 ## 4. The plan (do in order; each step has a "done when")
 
