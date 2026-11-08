@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from py2nb import convert  # noqa: E402
+import kenv  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ACCEL = {  # kaggle machine_shape values
@@ -25,12 +26,8 @@ ACCEL = {  # kaggle machine_shape values
 }
 
 
-def kaggle_user():
-    out = subprocess.run(["kaggle", "config", "view"], capture_output=True, text=True).stdout
-    m = re.search(r"username: (\S+)", out)
-    if not m:
-        sys.exit("not logged in: run `kaggle auth login`")
-    return m.group(1)
+def kaggle_user(account="main"):
+    return kenv.user(account)
 
 
 def main():
@@ -40,6 +37,7 @@ def main():
     ap.add_argument("--input", action="append", default=[], help="kernel output to mount (user/slug)")
     ap.add_argument("--dataset", action="append", default=[], help="dataset to mount (user/slug)")
     ap.add_argument("--set", action="append", default=[], help="override a top-level assignment, e.g. QUICK=False")
+    ap.add_argument("--account", default="main", choices=kenv.ACCOUNTS)
     ap.add_argument("--slug", help="default: tools-<file stem with _ as ->")
     args = ap.parse_args()
 
@@ -60,7 +58,7 @@ def main():
     tmp.unlink()
 
     shape, gpu = ACCEL[args.accel]
-    user = kaggle_user()
+    user = kaggle_user(args.account)
     meta = {
         "id": f"{user}/{slug}", "title": slug, "code_file": nb.name, "language": "python",
         "kernel_type": "notebook", "is_private": True, "enable_gpu": gpu, "enable_tpu": False,
@@ -69,8 +67,11 @@ def main():
     }
     (build / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
     print(json.dumps(meta, indent=2))
-    subprocess.run(["kaggle", "kernels", "push", "-p", str(build)], check=True)
-    print(f"\nstatus: kaggle kernels status {user}/{slug}\n"
+    code, out = kenv.run(["kernels", "push", "-p", str(build)], args.account)
+    print(out)
+    if code:
+        sys.exit(code)
+    print(f"\naccount: {args.account}\nstatus: kaggle kernels status {user}/{slug}\n"
           f"logs:   kaggle kernels logs {user}/{slug}\n"
           f"output: kaggle kernels output {user}/{slug} -p build/{slug}/out")
 
