@@ -45,11 +45,15 @@ def main():
     text = src.read_text()
     for kv in args.set:
         k, v = kv.split("=", 1)
+        if not v.strip():
+            sys.exit(f"--set {k}= has no value")
         text, n = re.subn(rf"^{k} = .*$", f"{k} = {v}", text, count=1, flags=re.M)
         if not n:
             sys.exit(f"no top-level assignment `{k} = ...` in {src}")
 
     slug = args.slug or "tools-" + src.stem.replace("_", "-")
+    if not re.fullmatch(r"[a-z0-9-]+", slug):
+        sys.exit(f"bad slug {slug!r}: use lowercase letters, digits and dashes only")
     build = ROOT / "build" / slug
     build.mkdir(parents=True, exist_ok=True)
     tmp = build / src.name
