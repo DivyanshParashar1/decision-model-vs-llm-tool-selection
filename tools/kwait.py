@@ -6,7 +6,7 @@ Kaggle notebooks run server-side and keep going regardless of this machine; this
 
 Exits as soon as ANY listed notebook finishes (so the next step can start), printing all statuses.
 Exit codes: 0 = one finished OK, 1 = one errored/cancelled, 3 = login expired (run `kaggle auth login --force`).
---fetch downloads only small outputs (json/log/csv) of finished notebooks into build/<slug>/out.
+--fetch downloads only small outputs (json/log/csv/parquet) of finished notebooks into build/<slug>/out.
 """
 import argparse
 import pathlib
@@ -53,7 +53,7 @@ def refresh_login():
 def fetch(ref, slug):
     out = ROOT / "build" / slug / "out"
     out.mkdir(parents=True, exist_ok=True)
-    run(["kernels", "output", ref, "-p", str(out), "-o", "--file-pattern", r".*\.(json|log|csv)$"])
+    run(["kernels", "output", ref, "-p", str(out), "-o", "--file-pattern", r".*\.(json|log|csv|parquet)$"])
     print(f"fetched small outputs -> {out}")
 
 
