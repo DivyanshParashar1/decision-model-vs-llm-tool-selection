@@ -32,7 +32,7 @@ both: the options are given and the decision is shallow. See `../exp1 .../report
   the reports accurate.
 - Use they/them for the user.
 
-## 3. Current status (as of 2026-11-08, 23:30 IST)
+## 3. Current status (as of 2026-11-09, 12:30 IST)
 
 Done:
 - [SPEC.md](SPEC.md): full design (MetaTool data, k = 10 candidates = 4 TF-IDF look-alikes + 5 random, 30 unseen tools,
@@ -59,7 +59,17 @@ Decider scoring detail: a classification schema with `multi_label=True, cls_thre
 returns a softmax probability for every candidate (verified in gliner2 2.1.0 source), and `batch_extract` takes one
 schema per text, so instances with different tool lists batch together.
 
-Not started: full runs of steps 2–4, step 5.
+- **Steps 2–5 done** (2026-11-09). Full runs: main `tools-02-baselines`, `tools-04-dstar` (9 jobs, all fp16 OK);
+  acc2 `tools-03-llm-star-1k`, `-4k`, `-full`. Small outputs (json/log/parquet) are under `build/<slug>/out`
+  (gitignored). `python tools/report.py` rebuilds instances locally (hash-checked), writes `reports/tables.md` and
+  `reports/results.json`; the narrative is `reports/RESULTS.md`, and the findings are in the README.
+- Headline: fine-tuned GLiNER beats QLoRA Qwen3-8B on seen tools (0.979 vs 0.951), ties on unseen (0.857 vs 0.857), loses
+  on two-tool requests (0.645 vs 0.708), with ~3× fewer training GPU-hours.
+- Not done (optional): C5, a second LLM\* seed, the manual label-noise check (SPEC §7), merged-LoRA latency for C3.
+- Two failed slugs from a launch bug sit on acc2 (`tools-03-llm-star-1k-1000`, `tools-03-llm-star-full-1000000`); ignore them.
+- Lessons from this run: zsh does not word-split `$var`, so never loop over "a b" pairs with `set -- $cfg`. vLLM with an
+  unmerged LoRA is ~3× slower than the base model on T4. GLiNER training peaks at 15.4 GB on a T4 at batch 8, so don't
+  raise the batch. `kernels logs` is empty while a notebook runs.
 
 ## 4. The plan (do in order; each step has a "done when")
 
