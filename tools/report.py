@@ -48,11 +48,12 @@ def load_preds(n_full: int) -> dict[str, pd.DataFrame]:
                     ("C2 GLiNER raw", "tools-02-baselines/out/preds_c2.parquet")]:
         if (b / f).exists():
             out[name] = pd.read_parquet(b / f)
-    for f in sorted(glob.glob(str(b / "tools-03-llm-star*/out/preds_llm_star_*.parquet"))):
+    by_n = lambda f: int(re.findall(r"_(\d+)(?:_s\d+)?\.(?:parquet|json)$", f)[0])  # noqa: E731
+    for f in sorted(glob.glob(str(b / "tools-03-llm-star*/out/preds_llm_star_*.parquet")), key=by_n):
         n = int(re.search(r"preds_llm_star_(\d+)\.parquet", f).group(1))
         if n >= 1000:  # skip QUICK smoke runs
             out[f"C3 Qwen3-8B QLoRA {size_name(n, n_full)}"] = pd.read_parquet(f)
-    for f in sorted(glob.glob(str(b / "tools-04-dstar/out/preds_dstar_*.parquet"))):
+    for f in sorted(glob.glob(str(b / "tools-04-dstar/out/preds_dstar_*.parquet")), key=lambda f: (by_n(f), f)):
         n, s = map(int, re.search(r"preds_dstar_(\d+)_s(\d+)\.parquet", f).groups())
         if n >= 1000:
             out[f"C4 GLiNER fine-tuned {size_name(n, n_full)} s{s}"] = pd.read_parquet(f)
@@ -144,7 +145,8 @@ def main():
     # costs
     costs = {}
     b = ROOT / "build"
-    for f in sorted(glob.glob(str(b / "tools-03-llm-star*/out/cost_llm_star_*.json"))):
+    for f in sorted(glob.glob(str(b / "tools-03-llm-star*/out/cost_llm_star_*.json")),
+                    key=lambda f: int(re.findall(r"_(\d+)\.json$", f)[0])):
         c = json.load(open(f))
         if c.get("quick"):
             continue
@@ -154,7 +156,7 @@ def main():
             infer_hw="2× T4 (vLLM, TP=2)")
     cd = b / "tools-04-dstar/out/cost_dstar.json"
     if cd.exists():
-        for tag, c in json.load(open(cd))["runs"].items():
+        for tag, c in sorted(json.load(open(cd))["runs"].items(), key=lambda kv: (kv[1].get("n", 0), kv[1].get("seed", 0))):
             if c.get("train_rc") != 0 or c.get("n", 0) < 1000:
                 continue
             costs[f"C4 {size_name(c['n'], n_full)} s{c['seed']}"] = dict(
